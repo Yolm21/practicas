@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+// estructuras
+typedef struct {
+    char nombreVacuna[50];
+    char fechaAplicacion[15];
+} Vacuna;
+
+typedef struct {
+    int idUnico;
+    char nombreAnimal[50];
+    int edadAnimal;
+    char sexoAnimal[10];
+    char razaAnimal[50];
+    Vacuna vacunasAplicadas[10];
+    int cantidadVacunas;
+} Animal;
+
+// Implementación 
+
+void agregarAnimal(Animal *animal, int id) {
+    animal->idUnico = id;
+    printf("\n--- Agregar nuevo animal (ID: %d) ---\n", animal->idUnico);
+
+    printf("Ingresa el nombre del animal: ");
+    scanf("%s", animal->nombreAnimal);
+
+    printf("Ingresa la edad: ");
+    scanf("%d", &animal->edadAnimal);
+
+    printf("Ingresa el sexo: ");
+    scanf("%s", animal->sexoAnimal);
+
+    printf("Ingresa la raza: ");
+    scanf("%s", animal->razaAnimal);
+
+    printf("Ingresa la cantidad de vacunas (max 10): ");
+    scanf("%d", &animal->cantidadVacunas);
+    
+    if (animal->cantidadVacunas > 10) {
+        animal->cantidadVacunas = 10;
+    }
+
+    for (int i = 0; i < animal->cantidadVacunas; i++) {
+        printf("Vacuna #%d\n", i + 1);
+        printf("  Nombre de la vacuna: ");
+        scanf("%s", animal->vacunasAplicadas[i].nombreVacuna);
+        printf("  Fecha de aplicacion (DD/MM/AAAA): ");
+        scanf("%s", animal->vacunasAplicadas[i].fechaAplicacion);
+    }
+}
+
+void mostrarAnimal(const Animal *animal) {
+    printf("\n--- Animal encontrado ---\n");
+    printf("ID: %d\n", animal->idUnico);
+    printf("Nombre: %s\n", animal->nombreAnimal);
+    printf("Edad: %d\n", animal->edadAnimal);
+    printf("Sexo: %s\n", animal->sexoAnimal);
+    printf("Raza: %s\n", animal->razaAnimal);
+    printf("Vacunas (%d):\n", animal->cantidadVacunas);
+    for (int i = 0; i < animal->cantidadVacunas; i++) {
+        printf("  - %s (Fecha: %s)\n", animal->vacunasAplicadas[i].nombreVacuna, animal->vacunasAplicadas[i].fechaAplicacion);
+    }
+}
+
+void buscarAnimal(Animal animales[], int numeroAnimales) {
+    if (numeroAnimales == 0) {
+        printf("\nNo hay animales registrados para buscar.\n");
+        return;
+    }
+
+    int opcion;
+    printf("\n Opciones de busqueda \n");
+    printf("1. Por ID\n");
+    printf("2. Por Nombre\n");
+    printf("3. Por Raza\n");
+    printf("Ingresa tu opcion: ");
+    scanf("%d", &opcion);
+
+    switch (opcion) {
+        case 1: {
+            int idBuscada;
+            printf("Ingresa la ID del animal a buscar: ");
+            scanf("%d", &idBuscada);
+            for (int i = 0; i < numeroAnimales; i++) {
+                if (animales[i].idUnico == idBuscada) {
+                    mostrarAnimal(&animales[i]);
+                    return;
+                }
+            }
+            break;
+        }
+        case 2: {
+            char nombreBuscado[50];
+            printf("Ingresa el nombre del animal a buscar: ");
+            scanf("%s", nombreBuscado);
+            for (int i = 0; i < numeroAnimales; i++) {
+                if (strcmp(animales[i].nombreAnimal, nombreBuscado) == 0) {
+                    mostrarAnimal(&animales[i]);
+                    return;
+                }
+            }
+            break;
+        }
+        case 3: {
+            char razaBuscada[50];
+            printf("Ingresa la raza del animal a buscar: ");
+            scanf("%s", razaBuscada);
+            for (int i = 0; i < numeroAnimales; i++) {
+                if (strcmp(animales[i].razaAnimal, razaBuscada) == 0) {
+                    mostrarAnimal(&animales[i]);
+                    return;
+                }
+            }
+            break;
+        }
+        default:
+            printf("Opcion invalida.\n");
+    }
+    printf("No se encontro un animal con el criterio de busqueda especificado.\n");
+}
+
+int main() {
+    Animal *zoologico = NULL;
+    int numeroAnimales = 0;
+    int opcionMenu;
+
+    do {
+        printf("\n MENU PRINCIPAL \n");
+        printf("1. Agregar un nuevo animal\n");
+        printf("2. Buscar un animal\n");
+        printf("3. Salir del programa\n");
+        printf("Ingresa tu opcion: ");
+        scanf("%d", &opcionMenu);
+
+        switch (opcionMenu) {
+            case 1: {
+                numeroAnimales++;
+                Animal *zoologicoTemp = (Animal *)realloc(zoologico, numeroAnimales * sizeof(Animal));
+
+                if (zoologicoTemp == NULL) {
+                    printf("Error al reasignar memoria. El programa terminara.\n");
+                    free(zoologico);
+                    return 1;
+                }
+                zoologico = zoologicoTemp;
+
+                agregarAnimal(&zoologico[numeroAnimales - 1], numeroAnimales);
+                break;
+            }
+            case 2: {
+                buscarAnimal(zoologico, numeroAnimales);
+                break;
+            }
+            case 3: {
+                printf("Saliendo del programa. ¡Hasta la proxima!\n");
+                break;
+            }
+            default:
+                printf("Opcion invalida. Por favor, intentalo de nuevo.\n");
+        }
+    } while (opcionMenu != 3);
+    
+    // Liberar la memoria del arreglo 
+    free(zoologico);
+
+    return 0;
+}
