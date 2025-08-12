@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Declaración de la estructura alumno
+struct alumno {
+    char nombre[20];
+    char apellido[20];
+    int edad;
+    int anio;
+    int nota[4];
+    float promedio;
+};
+
+// Función para limpiar el buffer de entrada
+void limpiarBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+int main() {
+    struct alumno r1;
+    int i, acum = 0;
+    
+    printf("Ingrese el Nombre del alumno (menor a 20 letras): ");
+    scanf("%s", r1.nombre);
+    
+    printf("Ingrese el Apellido del alumno (menor a 20 letras): ");
+    scanf("%s", r1.apellido);
+    
+    printf("Ingrese la Edad del alumno: ");
+    scanf("%d", &r1.edad);
+    limpiarBuffer();
+    
+    printf("Ingrese el Año que cursa el alumno: ");
+    scanf("%d", &r1.anio);
+    limpiarBuffer();
+    
+    // Bucle para ingresar las 4 notas y calcular el acumulado
+    for (i = 0; i < 4; i++) {
+        printf("Ingrese la nota Nro %d: ", i + 1);
+        scanf("%d", &r1.nota[i]);
+        limpiarBuffer();
+        acum = acum + r1.nota[i];
+    }
+    
+    // Cálculo del promedio
+    r1.promedio = (float)acum / 4;
+    
+    printf("\nEl promedio del alumno %s, %s es %.2f\n", r1.apellido, r1.nombre, r1.promedio);
+    
+    // Determinar la condición del alumno
+    if (r1.promedio >= 7.0) {
+        printf("El alumno ha PROMOCIONADO.\n");
+    } else if (r1.promedio >= 4.0) {
+        printf("El alumno ha REGULARIZADO.\n");
+    } else {
+        printf("El alumno NO ha regularizado.\n");
+    }
+    
+    return 0;
+}
