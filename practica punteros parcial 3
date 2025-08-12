@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+int main() {
+    int q = 10;
+    int x = 20;
+
+    int *ptr1 = &q;
+    int *ptr2 = &x;
+
+    printf(" Resultados de Operaciones con Punteros \n");
+    printf("\n");
+
+    // ptr1 + 1
+    printf("1. ptr1 + 1 = %p\n", (void*)(ptr1 + 1));
+    printf("Direccion inicial de ptr1: %p\n", (void*)ptr1);
+    
+    // *ptr2 - 2
+    printf("2. *ptr2 - 2 = %d\n", *ptr2 - 2);
+
+    // *ptr2++
+    printf("3. *ptr2++ = %d\n", *ptr2++);
+    printf("Nueva direccion de ptr2: %p\n", (void*)ptr2);
+
+    // Reiniciar ptr2 
+    ptr2 = &x;
+
+    // *ptr1--
+    printf("4. *ptr1-- = %d\n", *ptr1--);
+    printf("Nueva direccion de ptr1: %p\n", (void*)ptr1);
+
+    // Reiniciar ptr1 
+    ptr1 = &q;
+
+   // ptr1 <= ptr2
+printf("5. ptr1 <= ptr2 es %d\n", (ptr1 <= ptr2));
+
+// *ptr2 >= *ptr1
+printf("6. *ptr2 >= *ptr1 es %d\n", (*ptr2 >= *ptr1));
+
+    return 0;
+}
