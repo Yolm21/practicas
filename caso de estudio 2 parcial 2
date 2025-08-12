@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main (){
+	
+	char nombreestaciones [4][50];
+	char meses[3][15] = {"Octubre", "Noviembre", "Diciembre"};
+	float nivelescontaminacion [4][3];
+	
+	//ingreso de datos 
+	for (int i = 0; i <= 4; i++) {
+	
+	printf ("ingresa el nombre de la estacion: ");
+	scanf ("%s", nombreestaciones[i]);
+	
+	
+	printf ("ingresa el grado de contaminacion para  %s",  nombreestaciones[i] );
+	
+	for (int j = 0; j <= 3; j++) {
+	printf ("%s", meses[j]);
+	scanf ("%f", &nivelescontaminacion [i][j]);	
+	}
+
+	 }	 
+	 
+	// imprimir datos 
+	
+	printf ("datos registrados");
+	printf ("%-15s", "estacion");
+	
+	for (int j= 0; j <= 3; j++){
+		printf ("%-15s", meses);
+	}
+	printf ("\n");
+	
+	for (int i= 0; i<=4; i++){
+		printf ("%-15s", nombreestaciones[i]);
+		
+		for (int j = 0; j<=3; j++){
+			printf ("%-15.2f", nivelescontaminacion[i][j]);
+		}
+	printf ("\n");
+	}
+	
+	// calcular promedio 
+
+	return 0;
+}
