@@ -1,0 +1,179 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+#define NUMERO_REGISTROS 20
+#define UMBRAL_PM25 35.0
+
+typedef struct {
+    int identificador;
+    float pm25;
+    float co;
+    float temperatura;
+    float humedad;
+    char fecha[12];
+} RegistroAire;
+
+void generarRegistroAleatorio(RegistroAire registros[], int *contador) {
+    if (*contador < NUMERO_REGISTROS) {
+        registros[*contador].identificador = (*contador) + 1;
+        registros[*contador].pm25 = (float)(rand() % 10000) / 100.0;
+        registros[*contador].co = (float)(rand() % 2000) / 100.0;
+        registros[*contador].temperatura = (float)(rand() % 600 - 200) / 10.0;
+        registros[*contador].humedad = (float)(rand() % 101);
+        
+        time_t t = time(NULL);
+        struct tm *tm_info = localtime(&t);
+        strftime(registros[*contador].fecha, sizeof(registros[*contador].fecha), "%d/%m/%Y", tm_info);
+        
+        (*contador)++;
+    }
+}
+
+// parte A
+float mayorPM25(const RegistroAire registros[], int contador) {
+    if (contador == 0) return 0.0;
+    
+    float maximo = registros[0].pm25;
+    for (int i = 1; i < contador; i++) {
+        if (registros[i].pm25 > maximo) {
+            maximo = registros[i].pm25;
+        }
+    }
+    return maximo;
+}
+
+// parte B
+float promedioCO(const RegistroAire registros[], int contador) {
+    if (contador == 0) return 0.0;
+    float suma = 0.0;
+    for (int i = 0; i < contador; i++) {
+        suma += registros[i].co;
+    }
+    return suma / contador;
+}
+
+// parte C
+float temperaturaMinima(const RegistroAire registros[], int contador) {
+    if (contador == 0) return 0.0;
+    float minimo = registros[0].temperatura;
+    for (int i = 1; i < contador; i++) {
+        if (registros[i].temperatura < minimo) {
+            minimo = registros[i].temperatura;
+        }
+    }
+    return minimo;
+}
+
+// parte D
+void notificarPM25(const RegistroAire registros[], int contador) {
+    printf("\nAlerta de PM2.5\n");
+    for (int i = 0; i < contador; i++) {
+        if (registros[i].pm25 > UMBRAL_PM25) {
+            printf("Alerta en registro ID %d (Fecha: %s): PM2.5 de %.2f ug/m3 supera el umbral de %.2f ug/m3.\n", 
+                   registros[i].identificador, registros[i].fecha, registros[i].pm25, UMBRAL_PM25);
+        }
+    }
+}
+
+// parte E
+void mostrarTodosLosRegistros(const RegistroAire registros[], int contador) {
+    printf("\nTodos los Registros\n");
+    for (int i = 0; i < contador; i++) {
+        printf("ID: %d | Fecha: %s | PM2.5: %.2f | CO: %.2f | Temp: %.1f | Humedad: %.0f%%\n",
+               registros[i].identificador, registros[i].fecha, registros[i].pm25, registros[i].co,
+               registros[i].temperatura, registros[i].humedad);
+    }
+}
+
+// parte F
+void buscarPorIdentificador(const RegistroAire registros[], int contador, int idBuscado) {
+    printf("\nBusqueda por ID\n");
+    for (int i = 0; i < contador; i++) {
+        if (registros[i].identificador == idBuscado) {
+            printf("Registro encontrado:\n");
+            printf("ID: %d | Fecha: %s | PM2.5: %.2f | CO: %.2f | Temp: %.1f | Humedad: %.0f%%\n",
+                   registros[i].identificador, registros[i].fecha, registros[i].pm25, registros[i].co,
+                   registros[i].temperatura, registros[i].humedad);
+            return;
+        }
+    }
+    printf("No se encontro ningun registro con el ID %d.\n", idBuscado);
+}
+
+void buscarPorRangoDeFechas(const RegistroAire registros[], int contador, const char* fechaInicio, const char* fechaFin) {
+    printf("\nBusqueda por Rango de Fechas\n");
+    int encontrado = 0;
+    
+    for (int i = 0; i < contador; i++) {
+        if (strcmp(registros[i].fecha, fechaInicio) >= 0 && strcmp(registros[i].fecha, fechaFin) <= 0) {
+            printf("ID: %d | Fecha: %s | PM2.5: %.2f | CO: %.2f | Temp: %.1f | Humedad: %.0f%%\n",
+                   registros[i].identificador, registros[i].fecha, registros[i].pm25, registros[i].co,
+                   registros[i].temperatura, registros[i].humedad);
+            encontrado = 1;
+        }
+    }
+    
+    if (!encontrado) {
+        printf("No se encontraron registros en el rango de fechas %s a %s.\n", fechaInicio, fechaFin);
+    }
+}
+
+int main() {
+    srand(time(NULL));
+
+    RegistroAire registros[NUMERO_REGISTROS];
+    int contadorRegistros = 0;
+    int opcion;
+    int idBuscado;
+    char fechaInicio[12], fechaFin[12];
+
+    while (1) {
+        printf("\n--- Sistema de Monitoreo de Calidad del Aire ---\n");
+        printf("1. Generar nuevo registro de datos\n");
+        printf("2. Mostrar todos los registros\n");
+        printf("3. Mostrar estadisticas\n");
+        printf("4. Buscar registro por ID\n");
+        printf("5. Buscar registro por rango de fechas\n");
+        printf("6. Salir\n");
+        printf("Ingrese una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                generarRegistroAleatorio(registros, &contadorRegistros);
+                printf("Registro #%d generado.\n", contadorRegistros);
+                break;
+            case 2:
+                mostrarTodosLosRegistros(registros, contadorRegistros);
+                break;
+            case 3:
+                printf("\n--- Estadisticas ---\n");
+                printf("Mayor nivel de PM2.5: %.2f ug/m3\n", mayorPM25(registros, contadorRegistros));
+                printf("Promedio de CO: %.2f ppm\n", promedioCO(registros, contadorRegistros));
+                printf("Temperatura minima: %.1f C\n", temperaturaMinima(registros, contadorRegistros));
+                notificarPM25(registros, contadorRegistros);
+                break;
+            case 4:
+                printf("Ingrese el ID a buscar: ");
+                scanf("%d", &idBuscado);
+                buscarPorIdentificador(registros, contadorRegistros, idBuscado);
+                break;
+            case 5:
+                printf("Ingrese la fecha de inicio (DD/MM/AAAA): ");
+                scanf("%s", fechaInicio);
+                printf("Ingrese la fecha de fin (DD/MM/AAAA): ");
+                scanf("%s", fechaFin);
+                buscarPorRangoDeFechas(registros, contadorRegistros, fechaInicio, fechaFin);
+                break;
+            case 6:
+                printf("Saliendo del programa.\n");
+                return 0;
+            default:
+                printf("Opcion no valida. Por favor, intente de nuevo.\n");
+        }
+    }
+    
+    return 0;
+}
