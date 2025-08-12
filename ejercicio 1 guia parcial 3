@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Estructura 
+typedef struct {
+    int intensidadVehicular;
+    float velocidadPromedio;
+    int nivelCongestion;
+    int tiempoEspera;
+} DatosTrafico;
+
+// Función para generar datos aleatorios 
+void generarDatos(DatosTrafico *sensor, int horaActual) {
+    sensor->intensidadVehicular = rand() % 150 + 10;
+    sensor->velocidadPromedio = (float)(rand() % 80 + 20);
+    sensor->nivelCongestion = rand() % 101;
+
+    // Asignar el tiempo de espera 
+    if ((horaActual >= 7 && horaActual <= 9) || (horaActual >= 17 && horaActual <= 19)) {
+        sensor->tiempoEspera = rand() % 200 + 60;
+    } else {
+        sensor->tiempoEspera = rand() % 60;
+    }
+}
+
+// Función para alertar si hay congestión en el tráfico
+void alertarCongestion(DatosTrafico *sensor) {
+    if (sensor->nivelCongestion > 70 || sensor->tiempoEspera > 120) {
+        printf(" ALERTA DE CONGESTION \n");
+        printf(" Nivel de Congestion: %d%%\n", sensor->nivelCongestion);
+        printf(" Tiempo de Espera: %d segundos\n", sensor->tiempoEspera);
+        printf("---------------------------\n");
+    } else {
+        printf("  El trafico fluye sin congestion.\n");
+    }
+}
+
+int main() {
+    srand(time(NULL));
+    
+    int numeroLecturasDiarias = 3;
+    DatosTrafico lecturasDiarias[numeroLecturasDiarias];
+    int horasLectura[] = {8, 16, 24};
+
+    printf("--- Simulacion de Monitoreo de Trafico Urbano ---\n\n");
+
+    for (int i = 0; i < numeroLecturasDiarias; i++) {
+        int horaActual = horasLectura[i];
+        printf("Lectura %d (Hora %d:00):\n", i + 1, horaActual);
+
+        // Generar datos para la lectura actual
+        generarDatos(&lecturasDiarias[i], horaActual);
+
+        // Imprimir los datos del sensor
+        printf("  Intensidad Vehicular: %d veh/min\n", lecturasDiarias[i].intensidadVehicular);
+        printf("  Velocidad Promedio: %.2f km/h\n", lecturasDiarias[i].velocidadPromedio);
+        printf("  Nivel de Congestion: %d%%\n", lecturasDiarias[i].nivelCongestion);
+        printf("  Tiempo de Espera: %d seg\n", lecturasDiarias[i].tiempoEspera);
+
+        // alertar si hay congestion
+        alertarCongestion(&lecturasDiarias[i]);
+
+        printf("\n");
+    }
+
+    return 0;
+}
