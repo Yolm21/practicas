@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAXALUMNOS 50 
+
+// estructura 
+struct alumno {
+    char nombre[20];
+    char apellido[20];
+    int edad;
+    int anio;
+    int nota[4];
+    float promedio;
+};
+
+// Función ingresar datos
+void ingresarDatos(struct alumno *a) {
+    int j, acum = 0;
+    
+    printf("Ingrese el Nombre del alumno (menor a 20 letras): ");
+    scanf("%s", a->nombre);
+    
+    printf("Ingrese el Apellido del alumno (menor a 20 letras): ");
+    scanf("%s", a->apellido);
+    
+    printf("Ingrese la Edad del alumno: ");
+    scanf("%d", &a->edad);
+    
+    printf("Ingrese el Año que cursa el alumno: ");
+    scanf("%d", &a->anio);
+    
+    for (j = 0; j < 4; j++) {
+        printf("Ingrese la nota Nro %d: ", j + 1);
+        scanf("%d", &a->nota[j]);
+        acum += a->nota[j];
+    }
+    
+    a->promedio = (float)acum / 4;
+}
+
+// Función para mostrar los datos de un alumno
+void mostrarDatos(struct alumno a) {
+    int j;
+    
+    printf("\nDatos del alumno %s %s:\n", a.nombre, a.apellido);
+    printf("Edad: %d\n", a.edad);
+    printf("Anio que cursa: %d\n", a.anio);
+    printf("Notas: ");
+    for (j = 0; j < 4; j++) {
+        printf("%d ", a.nota[j]);
+    }
+    printf("\nPromedio: %.2f\n", a.promedio);
+}
+
+// Función para mostrar las estadísticas
+void mostrarEstadisticas(struct alumno alumnos[], int numInscriptos) {
+    int regulares = 0;
+    int promocionados = 0;
+    
+    printf("\n Estadisticas \n");
+    printf("Cantidad de alumnos inscriptos: %d\n", numInscriptos);
+    
+    for (int i = 0; i < numInscriptos; i++) {
+        if (alumnos[i].promedio >= 7.0) {
+            promocionados++;
+        } else if (alumnos[i].promedio >= 4.0) {
+            regulares++;
+        }
+    }
+    
+    printf("Alumnos regulares: %d\n", regulares);
+    printf("Alumnos promocionados: %d\n", promocionados);
+    
+    if (numInscriptos > 0) {
+        printf("Porcentaje de promocion: %.2f%%\n", (float)promocionados * 100 / numInscriptos);
+    } else {
+        printf("No hay alumnos para calcular el porcentaje.\n");
+    }
+}
+
+
+void main() {
+    struct alumno curso[MAXALUMNOS];
+    int opcion;
+    int numInscriptos = 0;
+    int alumnoSeleccionado;
+    
+    do {
+        printf("\n MENU DE OPCIONES \n");
+        printf("1 Ingresar datos de un alumno\n");
+        printf("2 Mostrar datos de un alumno\n");
+        printf("3 Mostrar estadisticas\n");
+        printf("0 Salir\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+        
+        switch (opcion) {
+            case 1:
+                if (numInscriptos < MAXALUMNOS) {
+                    ingresarDatos(&curso[numInscriptos]);
+                    numInscriptos++;
+                    printf("Datos del alumno ingresados correctamente.\n");
+                } else {
+                    printf("No se pueden ingresar mas alumnos, se ha alcanzado el limite.\n");
+                }
+                break;
+            case 2:
+                if (numInscriptos > 0) {
+                    printf("Ingrese el numero de alumno a mostrar (1 a %d): ", numInscriptos);
+                    scanf("%d", &alumnoSeleccionado);
+                    if (alumnoSeleccionado > 0 && alumnoSeleccionado <= numInscriptos) {
+                        mostrarDatos(curso[alumnoSeleccionado - 1]);
+                    } else {
+                        printf("Numero de alumno invalido.\n");
+                    }
+                } else {
+                    printf("No hay alumnos ingresados para mostrar.\n");
+                }
+                break;
+            case 3:
+                mostrarEstadisticas(curso, numInscriptos);
+                break;
+            case 0:
+                printf("Saliendo del programa...\n");
+                break;
+            default:
+                printf("Opcion invalida. Intente de nuevo.\n");
+                break;
+        }
+    } while (opcion != 0);
+    
+    system("PAUSE");
+}
