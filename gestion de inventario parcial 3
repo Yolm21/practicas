@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAXPRODUCTOS 100
+#define MAXNOMBRE 50
+#define MAXCATEGORIA 20
+
+//  Implementación de funciones
+
+void agregarProducto(int ids[], char nombres[][MAXNOMBRE], float precios[], int stocks[], char categorias[][MAXCATEGORIA], int* contador) {
+    if (*contador < MAXPRODUCTOS) {
+        printf("--- Agregar Nuevo Producto ---\n");
+        printf("Ingrese ID: ");
+        scanf("%d", &ids[*contador]);
+        printf("Ingrese nombre: ");
+        scanf(" %s", nombres[*contador]);
+        printf("Ingrese precio: ");
+        scanf("%f", &precios[*contador]);
+        printf("Ingrese stock: ");
+        scanf("%d", &stocks[*contador]);
+        printf("Ingrese categoria (ej. 'telefonía', 'electrodomesticos'): ");
+        scanf(" %s", categorias[*contador]);
+
+        (*contador)++;
+        printf("\nProducto agregado con exito.\n");
+    } else {
+        printf("El inventario esta lleno. No se pueden agregar mas productos.\n");
+    }
+}
+
+void buscarProducto(const int ids[], const char nombres[][MAXNOMBRE], const float precios[], const int stocks[], const char categorias[][MAXCATEGORIA], int contador) {
+    int idBuscar;
+    printf("--- Buscar Producto por ID ---\n");
+    printf("Ingrese el ID del producto: ");
+    scanf("%d", &idBuscar);
+
+    for (int i = 0; i < contador; i++) {
+        if (ids[i] == idBuscar) {
+            printf("\n--- Producto Encontrado ---\n");
+            printf("ID: %d\n", ids[i]);
+            printf("Nombre: %s\n", nombres[i]);
+            printf("Precio: %.2f\n", precios[i]);
+            printf("Stock: %d\n", stocks[i]);
+            printf("Categoria: %s\n", categorias[i]);
+            return;
+        }
+    }
+    printf("\nProducto con ID %d no encontrado.\n", idBuscar);
+}
+
+void calcularTotalInventario(const float precios[], const int stocks[], int contador) {
+    float total = 0.0;
+    for (int i = 0; i < contador; i++) {
+        total += precios[i] * stocks[i];
+    }
+    printf("--- Valor Total del Inventario ---\n");
+    printf("El valor total de todos los productos es: %.2f\n", total);
+}
+
+void aplicarDescuentos(float precios[], const char categorias[][MAXCATEGORIA], const char nombres[][MAXNOMBRE], int contador) {
+    printf("--- Aplicar Descuentos ---\n");
+    for (int i = 0; i < contador; i++) {
+        if (strcasecmp(categorias[i], "telefonía") == 0) {
+            precios[i] = precios[i] * 0.80;
+            printf("Descuento del 20%% aplicado a '%s' (Categoria: telefonia). Nuevo precio: %.2f\n", nombres[i], precios[i]);
+        } else if (strcasecmp(categorias[i], "electrodomesticos") == 0) {
+            precios[i] = precios[i] * 0.60;
+            printf("Descuento del 40%% aplicado a '%s' (Categoria: electrodomesticos). Nuevo precio: %.2f\n", nombres[i], precios[i]);
+        }
+    }
+    printf("\nDescuentos aplicados con exito.\n");
+}
+
+void mostrarInventario(const int ids[], const char nombres[][MAXNOMBRE], const float precios[], const int stocks[], const char categorias[][MAXCATEGORIA], int contador) {
+    if (contador == 0) {
+        printf("El inventario esta vacio.\n");
+        return;
+    }
+    printf("--- Inventario Completo ---\n");
+    printf("%-5s %-20s %-10s %-10s %-15s\n", "ID", "Nombre", "Precio", "Stock", "Categoria");
+    printf("--------------------------------------------------------------\n");
+    for (int i = 0; i < contador; i++) {
+        printf("%-5d %-20s %-10.2f %-10d %-15s\n",
+               ids[i], nombres[i], precios[i], stocks[i], categorias[i]);
+    }
+}
+
+
+int main() {
+    int ids[MAXPRODUCTOS];
+    char nombres[MAXPRODUCTOS][MAXNOMBRE];
+    float precios[MAXPRODUCTOS];
+    int stocks[MAXPRODUCTOS];
+    char categorias[MAXPRODUCTOS][MAXCATEGORIA];
+    int contadorProductos = 0;
+    int opcion;
+    char continuar;
+
+    do {
+        printf("--- Sistema de Gestion de Inventario ---\n");
+        printf("1. Agregar producto\n");
+        printf("2. Buscar producto por ID\n");
+        printf("3. Calcular valor total del inventario\n");
+        printf("4. Aplicar descuentos por categoria\n");
+        printf("5. Mostrar inventario completo\n");
+        printf("6. Salir\n");
+        printf("----------------------------------------\n");
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion);
+
+        switch (opcion) {
+            case 1:
+                agregarProducto(ids, nombres, precios, stocks, categorias, &contadorProductos);
+                break;
+            case 2:
+                buscarProducto(ids, nombres, precios, stocks, categorias, contadorProductos);
+                break;
+            case 3:
+                calcularTotalInventario(precios, stocks, contadorProductos);
+                break;
+            case 4:
+                aplicarDescuentos(precios, categorias, nombres, contadorProductos);
+                break;
+            case 5:
+                mostrarInventario(ids, nombres, precios, stocks, categorias, contadorProductos);
+                break;
+            case 6:
+                printf("Saliendo del programa. ¡Hasta luego!\n");
+                return 0;
+            default:
+                printf("Opcion no valida. Intente de nuevo.\n");
+                break;
+        }
+        
+        printf("\nPresione 's' para continuar o cualquier otra tecla para salir: ");
+        scanf(" %c", &continuar);
+
+    } while (continuar == 's' || continuar == 'S');
+
+    printf("Saliendo del programa. ¡Hasta luego!\n");
+    
+    return 0;
+}
