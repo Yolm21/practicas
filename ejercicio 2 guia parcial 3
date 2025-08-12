@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// estructura Paciente
+typedef struct {
+    int idPaciente;
+    int frecuenciaCardiaca;
+    int presionSistolica;
+    int presionDiastolica;
+    float saturacionOxigeno;
+    float temperaturaCorporal;
+} DatosPaciente;
+
+void actualizarDatos(DatosPaciente *paciente, int *requiereIntervencion) {
+    
+	// Genera valores aleatorios en rangos críticos
+    paciente->frecuenciaCardiaca = rand() % 50 + 130; 
+    paciente->presionSistolica = rand() % 40 + 80; 
+    paciente->presionDiastolica = rand() % 20 + 40;
+    paciente->saturacionOxigeno = (float)(rand() % 100) / 100.0 * 10 + 80; 
+    paciente->temperaturaCorporal = (float)(rand() % 100) / 100.0 * 5 + 39; 
+    // Verificar si el paciente necesita atención
+    *requiereIntervencion = 0;
+    if (paciente->saturacionOxigeno < 90.0 || paciente->frecuenciaCardiaca > 120 || paciente->presionSistolica < 90) {
+        *requiereIntervencion = 1;
+    }
+}
+
+int main() {
+    srand(time(NULL));
+
+    int numeroPacientes;
+    printf("Ingrese la cantidad de pacientes a monitorear: ");
+    scanf("%d", &numeroPacientes);
+
+    // Asignación dinámica de memoria para la lista de pacientes
+    DatosPaciente *listaPacientes = (DatosPaciente*)malloc(numeroPacientes * sizeof(DatosPaciente));
+
+    if (listaPacientes == NULL) {
+        printf("Error No se pudo asignar memoria para los pacientes.\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < numeroPacientes; i++) {
+        listaPacientes[i].idPaciente = i + 1;
+        listaPacientes[i].frecuenciaCardiaca = 80;
+        listaPacientes[i].presionSistolica = 120;
+        listaPacientes[i].presionDiastolica = 80;
+        listaPacientes[i].saturacionOxigeno = 98.0;
+        listaPacientes[i].temperaturaCorporal = 36.5;
+    }
+
+    printf("\nIniciando monitoreo de %d pacientes. Alertas se mostraran cada 10 minutos.\n\n", numeroPacientes);
+
+    for (int tiempo = 0; tiempo < 60; tiempo += 10) {
+        printf(" Tiempo: %d minutos \n", tiempo);
+        for (int i = 0; i < numeroPacientes; i++) {
+            int requiereIntervencion;
+      
+            if (rand() % 5 == 0) {
+                actualizarDatos(&listaPacientes[i], &requiereIntervencion);
+                if (requiereIntervencion == 1) {
+                    printf("ALERTA Paciente %d en estado critico.\n", listaPacientes[i].idPaciente);
+                    printf("    Frecuencia Cardiaca: %d, Presion Arterial: %d/%d, Saturacion O2: %.2f%%, Temperatura: %.2f C\n",
+                           listaPacientes[i].frecuenciaCardiaca, listaPacientes[i].presionSistolica,
+                           listaPacientes[i].presionDiastolica, listaPacientes[i].saturacionOxigeno,
+                           listaPacientes[i].temperaturaCorporal);
+                }
+            }
+        }
+        printf("\n");
+    }
+
+    // Liberar la memoria asignada
+    free(listaPacientes);
+
+    return 0;
+}
