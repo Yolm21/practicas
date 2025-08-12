@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main (){
+	
+	int MAX=1000;
+	int grupo= 20;
+	
+	int i=1;
+	int respuesta;
+	int contador = 0; 
+	
+	printf ("deseas impimir el primer bloque de numeros? (0 para si 1 para no ) \n");
+	scanf ("%d", &respuesta);
+	
+	if (respuesta == 1){
+		printf ("no se imprimiran mas numeros \n");
+		return 0;
+	}
+
+do{
+printf ("%d\t", i++);
+
+contador ++;
+ if(contador == grupo){
+ 	printf ("\n");
+ 	printf ("deseas imprimir mas numeros?(0 para si 1 para no ) ");
+ 	scanf ("%d", &respuesta);
+ 	
+ 	if (respuesta == 1){
+     break;
+	 }
+   contador = 0;
+ }	 
+	
+}while (i <= MAX);
+
+return 0;
+}
