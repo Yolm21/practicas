@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+
+// Estructura 
+typedef struct {
+    int id; 
+    float ph;
+    float nutrientes;
+    float temperaturaagua;
+    float luzsolar;
+    char timestamp[20];
+} RegistroCultivo;
+
+//  funciones
+
+// parte A 
+float obtenerValorMaximoDeNutrientes(RegistroCultivo registros[], int cantidad) {
+    float maximoNutrientes = 0.0;
+    for (int i = 0; i < cantidad; i++) {
+        if (registros[i].nutrientes > maximoNutrientes) {
+            maximoNutrientes = registros[i].nutrientes;
+        }
+    }
+    return maximoNutrientes;
+}
+
+// parte B 
+float calcularPromedioDePH(RegistroCultivo registros[], int cantidad) {
+    float sumaPh = 0.0;
+    for (int i = 0; i < cantidad; i++) {
+        sumaPh += registros[i].ph;
+    }
+    return sumaPh / cantidad;
+}
+
+// parte C 
+void encontrarDiaConMenorLuzSolar(RegistroCultivo registros[], int cantidad) {
+    float luzsolarMinima = registros[0].luzsolar;
+    char timestampMinimo[20];
+    strcpy(timestampMinimo, registros[0].timestamp);
+
+    for (int i = 1; i < cantidad; i++) {
+        if (registros[i].luzsolar < luzsolarMinima) {
+            luzsolarMinima = registros[i].luzsolar;
+            strcpy(timestampMinimo, registros[i].timestamp);
+        }
+    }
+    printf("Dia con menor luz solar: %.1f lux (registrada en %s)\n\n", luzsolarMinima, timestampMinimo);
+}
+
+// parte D 
+void notificarPHFueraDeRangoIdeal(RegistroCultivo registros[], int cantidad) {
+    printf(" Notificaciones de pH fuera del rango ideal \n");
+    for (int i = 0; i < cantidad; i++) {
+        if (registros[i].ph < 5.5 || registros[i].ph > 6.5) {
+            printf("ID %d: pH (%.1f) esta fuera del rango ideal (5.5 - 6.5)\n", registros[i].id, registros[i].ph);
+        }
+    }
+}
+
+// parte E 
+void listarRegistrosCompletos(RegistroCultivo registros[], int cantidad) {
+    printf("--- Listado de Registros ---\n");
+    for (int i = 0; i < cantidad; i++) {
+        printf("ID: %d, Hora de captura: %s\n", registros[i].id, registros[i].timestamp);
+    }
+}
+
+// parte F 
+void filtrarRegistrosPorCondicionesCriticas(RegistroCultivo registros[], int cantidad) {
+    printf("--- Registros con condiciones criticas (Temperatura < 10C) ---\n");
+    for (int i = 0; i < cantidad; i++) {
+        if (registros[i].temperaturaagua < 10.0) {
+            printf("ID: %d, Hora: %s, Temperatura: %.1fC\n", registros[i].id, registros[i].timestamp, registros[i].temperaturaagua);
+        }
+    }
+}
+
+int main() {
+    RegistroCultivo registros[] = {
+        {1, 6.2, 950.0, 22.5, 5000.0, "25/08/2025 00:00"},
+        {2, 6.0, 1100.0, 21.8, 6500.0, "25/08/2025 04:00"},
+        {3, 6.8, 1250.0, 20.0, 7000.0, "25/08/2025 08:00"},
+        {4, 5.5, 800.0, 23.1, 9000.0, "25/08/2025 12:00"},
+        {5, 5.4, 750.0, 24.5, 8500.0, "25/08/2025 16:00"},
+        {6, 6.1, 1050.0, 21.0, 4000.0, "25/08/2025 20:00"}
+    };
+    int cantidad = sizeof(registros) / sizeof(registros[0]);
+
+    // imprimir parte A
+    float maximoNutrientes = obtenerValorMaximoDeNutrientes(registros, cantidad);
+    printf("Valor maximo de nutrientes: %.1f ppm\n\n", maximoNutrientes);
+
+    // imprimir parte B
+    float promedioPh = calcularPromedioDePH(registros, cantidad);
+    printf("Promedio de pH: %.2f\n\n", promedioPh);
+
+    // imprimir parte C
+    encontrarDiaConMenorLuzSolar(registros, cantidad);
+
+    // imprimir parte D
+    notificarPHFueraDeRangoIdeal(registros, cantidad);
+    printf("\n");
+
+    // imprimir parte E
+    listarRegistrosCompletos(registros, cantidad);
+    printf("\n");
+
+    // imprimir parte F
+    filtrarRegistrosPorCondicionesCriticas(registros, cantidad);
+    printf("\n");
+
+    return 0;
+}
